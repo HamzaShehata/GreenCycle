@@ -1,7 +1,36 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = 'البريد الإلكتروني مطلوب';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'صيغة البريد الإلكتروني مش صحيحة';
+    }
+
+    if (!password) {
+      newErrors.password = 'كلمة المرور مطلوبة';
+    } else if (password.length < 6) {
+      newErrors.password = 'كلمة المرور لازم تكون 6 حروف على الأقل';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleLogin = () => {
+    if (validate()) {
+      navigate('/dashboard');
+    }
+  };
 
   return (
     <div className="screen">
@@ -15,12 +44,34 @@ export default function LoginPage() {
 
           <div className="form-group">
             <label>البريد الإلكتروني</label>
-            <input type="email" placeholder="you@example.com" />
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={errors.email ? { borderColor: 'var(--r500)' } : {}}
+            />
+            {errors.email && (
+              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>
+                {errors.email}
+              </p>
+            )}
           </div>
 
           <div className="form-group">
             <label>كلمة المرور</label>
-            <input type="password" placeholder="••••••••" />
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={errors.password ? { borderColor: 'var(--r500)' } : {}}
+            />
+            {errors.password && (
+              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>
+                {errors.password}
+              </p>
+            )}
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 20px', fontSize: '13px' }}>
@@ -36,7 +87,7 @@ export default function LoginPage() {
           <button
             className="btn btn-primary"
             style={{ width: '100%', justifyContent: 'center' }}
-            onClick={() => navigate('/')}
+            onClick={handleLogin}
           >
             تسجيل الدخول ←
           </button>
@@ -54,7 +105,7 @@ export default function LoginPage() {
 
           <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--n500)', marginTop: '20px' }}>
             لسه معملتش حساب؟{' '}
-            <a href="#" style={{ color: 'var(--g600)', fontWeight: '600' }}>
+            <a href="#" style={{ color: 'var(--g600)', fontWeight: '600' }} onClick={() => navigate('/register')}>
               اعمل حساب جديد
             </a>
           </p>
