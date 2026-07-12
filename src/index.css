@@ -212,3 +212,9 @@ tbody tr:hover td{background:var(--g50)}
   .esg-grid{grid-template-columns:1fr}
   .grid-2,.grid-3{grid-template-columns:1fr}
 }
+.leaflet-pane, .leaflet-top, .leaflet-bottom {
+  z-index: 10 !important;
+}
+.leaflet-container {
+  z-index: 1;
+}

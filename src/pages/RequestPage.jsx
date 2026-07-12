@@ -1,17 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocationPicker from '../components/LocationPicker';
-const MATERIALS = [
-  { id: 'plastic', icon: '♻️', name: 'بلاستيك', desc: 'كل الأنواع' },
-  { id: 'paper', icon: '📄', name: 'ورق', desc: 'كرتون' },
-  { id: 'metal', icon: '🔩', name: 'معدن', desc: 'ألومنيوم، حديد' },
-  { id: 'glass', icon: '🔮', name: 'زجاج', desc: 'زجاجات، برطمانات' },
-  { id: 'electronics', icon: '💻', name: 'إلكترونيات', desc: 'مخلفات إلكترونية' },
-  { id: 'organic', icon: '🌿', name: 'عضوي', desc: 'مخلفات طعام' },
-];
+import { useRequests } from '../context/RequestsContext';
 
+// ملحوظة: الأسعار دي مؤقتة ومثبتة هنا بس لحد ما نعمل الباك اند وصفحة الأدمن.
+// بعد كده الأسعار دي هتيجي من الـ API وهيقدر الأدمن يعدلها من لوحة التحكم بتاعته.
+const MATERIALS = [
+  { id: 'plastic', icon: '♻️', name: 'بلاستيك', desc: 'كل الأنواع', pricePerKg: 3 },
+  { id: 'paper', icon: '📄', name: 'ورق', desc: 'كرتون', pricePerKg: 2 },
+  { id: 'metal', icon: '🔩', name: 'معدن', desc: 'ألومنيوم، حديد', pricePerKg: 8 },
+  { id: 'glass', icon: '🔮', name: 'زجاج', desc: 'زجاجات، برطمانات', pricePerKg: 1.5 },
+  { id: 'electronics', icon: '💻', name: 'إلكترونيات', desc: 'مخلفات إلكترونية', pricePerKg: 12 },
+];
 export default function RequestPage() {
   const navigate = useNavigate();
+  const { addRequest } = useRequests();
 
   const [selectedMaterials, setSelectedMaterials] = useState(['plastic', 'metal']);
   const [weight, setWeight] = useState('12');
@@ -19,7 +22,8 @@ export default function RequestPage() {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('الغردقة');
   const [building, setBuilding] = useState('');
-  const [location, setLocation] = useState({ lat: 27.2579, lng: 33.8116 });  const [timeSlot, setTimeSlot] = useState('morning');
+  const [location, setLocation] = useState({ lat: 27.2579, lng: 33.8116 });
+  const [timeSlot, setTimeSlot] = useState('morning');
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -28,6 +32,17 @@ export default function RequestPage() {
       prev.includes(id) ? prev.filter((m) => m !== id) : [...prev, id]
     );
   };
+
+  // متوسط سعر الكيلو للمواد المختارة × الوزن الكلي = القيمة التقديرية
+  const selectedPrices = MATERIALS.filter((m) => selectedMaterials.includes(m.id)).map(
+    (m) => m.pricePerKg
+  );
+  const avgPrice =
+    selectedPrices.length > 0
+      ? selectedPrices.reduce((a, b) => a + b, 0) / selectedPrices.length
+      : 0;
+  const estimatedValue = (avgPrice * Number(weight || 0)).toFixed(2);
+  const estimatedPoints = Math.round(estimatedValue * 20);
 
   const validate = () => {
     const newErrors = {};
@@ -39,8 +54,12 @@ export default function RequestPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+ const handleSubmit = () => {
     if (validate()) {
+      const materialNames = MATERIALS.filter((m) => selectedMaterials.includes(m.id)).map(
+        (m) => m.name
+      );
+      addRequest({ materials: materialNames, weight });
       setSubmitted(true);
     }
   };
@@ -60,7 +79,7 @@ export default function RequestPage() {
           <div className="sidebar-item active">
             <span className="si-icon">➕</span>طلب جديد
           </div>
-          <div className="sidebar-item">
+       <div className="sidebar-item" onClick={() => navigate('/my-requests')}>
             <span className="si-icon">📍</span>طلباتي
           </div>
           <div className="sidebar-item">
@@ -109,6 +128,9 @@ export default function RequestPage() {
                         <div>
                           <div style={{ fontSize: '12px', fontWeight: '700' }}>{m.name}</div>
                           <div style={{ fontSize: '11px', color: 'var(--n400)' }}>{m.desc}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--g600)', fontWeight: '600', marginTop: '2px' }}>
+                            {m.pricePerKg} جنيه / كجم
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -183,11 +205,12 @@ export default function RequestPage() {
                         onChange={(e) => setBuilding(e.target.value)}
                       />
                     </div>
-                  </div><LocationPicker onLocationSelect={setLocation} />
+                  </div>
+                  <LocationPicker onLocationSelect={setLocation} />
                   <p style={{ fontSize: '12px', color: 'var(--n500)', marginTop: '8px' }}>
                     📍 الموقع المحدد: {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
                   </p>
-            </div>
+                </div>
 
                 <div className="card">
                   <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--n800)', marginBottom: '12px' }}>
@@ -228,11 +251,13 @@ export default function RequestPage() {
                     color: '#fff',
                   }}
                 >
-                  <div style={{ fontSize: '12px', opacity: '.8', marginBottom: '4px' }}>المكافأة المتوقعة</div>
+                  <div style={{ fontSize: '12px', opacity: '.8', marginBottom: '4px' }}>القيمة التقديرية</div>
                   <div style={{ fontSize: '32px', fontWeight: '900' }}>
-                    360 <span style={{ fontSize: '16px', fontWeight: '500', opacity: '.8' }}>نقطة GreenPoints</span>
+                    {estimatedValue} <span style={{ fontSize: '16px', fontWeight: '500', opacity: '.8' }}>جنيه</span>
                   </div>
-                  <div style={{ fontSize: '12px', opacity: '.7', marginTop: '4px' }}>≈ 18.00 جنيه قيمة نقدية</div>
+                  <div style={{ fontSize: '12px', opacity: '.7', marginTop: '4px' }}>
+                    ≈ {estimatedPoints} نقطة GreenPoints
+                  </div>
                 </div>
 
                 <button

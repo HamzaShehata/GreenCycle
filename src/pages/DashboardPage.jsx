@@ -1,53 +1,12 @@
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   return (
     <div className="screen">
       <div className="dash-layout">
-        {/* SIDEBAR */}
-        <div className="sidebar">
-          <div style={{ padding: '16px', borderBottom: '1px solid var(--n200)', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div className="avatar" style={{ width: '36px', height: '36px', background: 'var(--g100)', color: 'var(--g700)', fontSize: '13px' }}>
-                سأ
-              </div>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>سارة أحمد</div>
-                <div style={{ fontSize: '11px', color: 'var(--n400)' }}>مستخدم عادي</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="sidebar-section">
-            <div className="sidebar-label">الرئيسية</div>
-            <div className="sidebar-item active">
-              <span className="si-icon">📊</span>لوحة التحكم
-            </div>
-            <div className="sidebar-item" onClick={() => navigate('/request')}>
-              <span className="si-icon">➕</span>طلب جديد<span className="sidebar-badge">جديد</span>
-            </div>
-            <div className="sidebar-item">
-              <span className="si-icon">📍</span>طلباتي
-            </div>
-            <div className="sidebar-item">
-              <span className="si-icon">💰</span>المحفظة
-            </div>
-          </div>
-
-          <div className="sidebar-section">
-            <div className="sidebar-label">الحساب</div>
-            <div className="sidebar-item">
-              <span className="si-icon">👤</span>الملف الشخصي
-            </div>
-            <div className="sidebar-item">
-              <span className="si-icon">🔔</span>الإشعارات<span className="sidebar-badge">3</span>
-            </div>
-            <div className="sidebar-item">
-              <span className="si-icon">⚙️</span>الإعدادات
-            </div>
-          </div>
-        </div>
+        <Sidebar active="dashboard" />
 
         {/* MAIN */}
         <div className="dash-main">
