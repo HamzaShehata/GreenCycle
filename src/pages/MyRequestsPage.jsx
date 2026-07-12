@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRequests } from '../context/RequestsContext';
+import Sidebar from '../components/Sidebar';
 
 export default function MyRequestsPage() {
   const navigate = useNavigate();
@@ -18,25 +19,9 @@ export default function MyRequestsPage() {
   return (
     <div className="screen">
       <div className="dash-layout">
-        <div className="sidebar">
-          <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--n200)', marginBottom: '12px' }}>
-            <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>سارة أحمد</div>
-            <div style={{ fontSize: '11px', color: 'var(--n400)' }}>مستخدم عادي</div>
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/dashboard')}>
-            <span className="si-icon">📊</span>لوحة التحكم
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/request')}>
-            <span className="si-icon">➕</span>طلب جديد
-          </div>
-          <div className="sidebar-item active">
-            <span className="si-icon">📍</span>طلباتي
-          </div>
-        <div className="sidebar-item" onClick={() => navigate('/wallet')}>
-            <span className="si-icon">💰</span>المحفظة
-          </div>
-        </div>
+        <Sidebar active="my-requests" />
 
+        {/* MAIN */}
         <div className="dash-main">
           <div className="dash-header">
             <div>

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 
 // ⚠️ MOCK DATA — البيانات دي كلها وهمية دلوقتي.
 // لما نعمل الباك اند، الرصيد وتاريخ العمليات دول هيجيوا من الـ API
@@ -25,10 +25,6 @@ const TYPE_BADGE = {
 };
 
 export default function WalletPage() {
-  const navigate = useNavigate();
-
-  // الأزرار دي مؤقتاً بترجع تنبيه بسيط لحد ما يتعمل الباك اند
-  // ويبقى فيه فعلياً نظام استبدال/سحب/تبرع حقيقي
   const handleAction = (action) => {
     alert(`ميزة "${action}" هتشتغل فعلياً لما نربط الباك اند`);
   };
@@ -36,25 +32,7 @@ export default function WalletPage() {
   return (
     <div className="screen">
       <div className="dash-layout">
-        {/* SIDEBAR */}
-        <div className="sidebar">
-          <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--n200)', marginBottom: '12px' }}>
-            <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>سارة أحمد</div>
-            <div style={{ fontSize: '11px', color: 'var(--n400)' }}>مستخدم عادي</div>
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/dashboard')}>
-            <span className="si-icon">📊</span>لوحة التحكم
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/request')}>
-            <span className="si-icon">➕</span>طلب جديد
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/my-requests')}>
-            <span className="si-icon">📍</span>طلباتي
-          </div>
-          <div className="sidebar-item active">
-            <span className="si-icon">💰</span>المحفظة
-          </div>
-        </div>
+        <Sidebar active="wallet" />
 
         {/* MAIN */}
         <div className="dash-main">

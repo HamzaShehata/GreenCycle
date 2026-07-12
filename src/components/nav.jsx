@@ -2,6 +2,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const TABS = [
   { id: '', label: '🌍 الرئيسية' },
+  { id: 'about', label: 'مين إحنا' },
+  { id: 'pricing', label: 'الأسعار' },
   { id: 'login', label: 'تسجيل الدخول' },
 ];
 

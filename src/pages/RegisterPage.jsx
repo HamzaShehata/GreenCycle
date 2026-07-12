@@ -54,7 +54,15 @@ export default function RegisterPage() {
 
   const handleSubmit = () => {
     if (validate()) {
-      navigate('/dashboard');
+      // نوجّه المستخدم لصفحة مختلفة حسب الدور اللي اختاره
+      if (selectedRole === 'collector') {
+        navigate('/collector');
+      } else if (selectedRole === 'factory') {
+        // لسه معملناش صفحة خاصة بالمصنع، فمؤقتاً بتوديه للداشبورد العادي
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     }
   };
 
@@ -120,7 +128,7 @@ export default function RegisterPage() {
             <label>البريد الإلكتروني</label>
             <input
               type="email"
-              placeholder="hamza@example.com"
+              placeholder="ahmed@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={inputStyle('email')}

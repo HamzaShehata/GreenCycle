@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LocationPicker from '../components/LocationPicker';
+import Sidebar from '../components/Sidebar';
 import { useRequests } from '../context/RequestsContext';
 
 // ملحوظة: الأسعار دي مؤقتة ومثبتة هنا بس لحد ما نعمل الباك اند وصفحة الأدمن.
@@ -12,6 +13,7 @@ const MATERIALS = [
   { id: 'glass', icon: '🔮', name: 'زجاج', desc: 'زجاجات، برطمانات', pricePerKg: 1.5 },
   { id: 'electronics', icon: '💻', name: 'إلكترونيات', desc: 'مخلفات إلكترونية', pricePerKg: 12 },
 ];
+
 export default function RequestPage() {
   const navigate = useNavigate();
   const { addRequest } = useRequests();
@@ -33,7 +35,6 @@ export default function RequestPage() {
     );
   };
 
-  // متوسط سعر الكيلو للمواد المختارة × الوزن الكلي = القيمة التقديرية
   const selectedPrices = MATERIALS.filter((m) => selectedMaterials.includes(m.id)).map(
     (m) => m.pricePerKg
   );
@@ -54,7 +55,7 @@ export default function RequestPage() {
     return Object.keys(newErrors).length === 0;
   };
 
- const handleSubmit = () => {
+  const handleSubmit = () => {
     if (validate()) {
       const materialNames = MATERIALS.filter((m) => selectedMaterials.includes(m.id)).map(
         (m) => m.name
@@ -67,25 +68,7 @@ export default function RequestPage() {
   return (
     <div className="screen">
       <div className="dash-layout">
-        {/* SIDEBAR */}
-        <div className="sidebar">
-          <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid var(--n200)', marginBottom: '12px' }}>
-            <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>سارة أحمد</div>
-            <div style={{ fontSize: '11px', color: 'var(--n400)' }}>مستخدم عادي</div>
-          </div>
-          <div className="sidebar-item" onClick={() => navigate('/dashboard')}>
-            <span className="si-icon">📊</span>لوحة التحكم
-          </div>
-          <div className="sidebar-item active">
-            <span className="si-icon">➕</span>طلب جديد
-          </div>
-       <div className="sidebar-item" onClick={() => navigate('/my-requests')}>
-            <span className="si-icon">📍</span>طلباتي
-          </div>
-          <div className="sidebar-item">
-            <span className="si-icon">💰</span>المحفظة
-          </div>
-        </div>
+        <Sidebar active="request" />
 
         {/* MAIN */}
         <div className="dash-main">
