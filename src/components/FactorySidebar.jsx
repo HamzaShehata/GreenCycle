@@ -1,26 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useRequests } from '../context/RequestsContext';
 import { useUI } from '../context/UIContext';
 
-const MAIN_ITEMS = [
-  { id: 'dashboard', path: '/dashboard', icon: '📊', label: 'لوحة التحكم' },
-  { id: 'request', path: '/request', icon: '➕', label: 'طلب جديد' },
-  { id: 'my-requests', path: '/my-requests', icon: '📍', label: 'طلباتي' },
-  { id: 'wallet', path: '/wallet', icon: '💰', label: 'المحفظة' },
+const ITEMS = [
+  { id: 'dashboard', icon: '📊', label: 'لوحة التحكم' },
+  { id: 'inventory', icon: '📦', label: 'تصفح المخزون' },
+  { id: 'orders', icon: '🧾', label: 'أوامر الشراء' },
 ];
 
-const ACCOUNT_ITEMS = [
-  { id: 'profile', path: '/profile', icon: '👤', label: 'الملف الشخصي' },
-  { id: 'notifications', path: '/notifications', icon: '🔔', label: 'الإشعارات' },
-  { id: 'settings', path: '/settings', icon: '⚙️', label: 'الإعدادات' },
-];
-
-export default function Sidebar({ active }) {
+export default function FactorySidebar({ active, onNavigate }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const { unreadCount } = useRequests();
   const { mobileSidebarOpen, closeMobileSidebar } = useUI();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -29,12 +20,12 @@ export default function Sidebar({ active }) {
     navigate('/');
   };
 
-  const goTo = (path) => {
-    navigate(path);
+  const goTo = (id) => {
+    onNavigate(id);
     closeMobileSidebar();
   };
 
-  const displayName = user ? `${user.firstName} ${user.lastName}`.trim() : 'زائر';
+  const displayName = user ? `${user.firstName} ${user.lastName}`.trim() : 'مصنع';
   const initials = user ? user.firstName.charAt(0) + (user.lastName.charAt(0) || '') : '؟';
 
   return (
@@ -85,78 +76,35 @@ export default function Sidebar({ active }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'nowrap', minWidth: 0 }}>
             <div
               className="avatar"
-              style={{
-                width: '36px',
-                height: '36px',
-                background: 'var(--g100)',
-                color: 'var(--g700)',
-                fontSize: '13px',
-                flexShrink: 0,
-              }}
+              style={{ width: '36px', height: '36px', background: '#fef3c7', color: '#92400e', fontSize: '13px', flexShrink: 0 }}
             >
               {initials}
             </div>
             {!collapsed && (
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div
-                  style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: 'var(--n800)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
+                  style={{ fontSize: '13px', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                   title={displayName}
                 >
                   {displayName}
                 </div>
-                <div
-                  style={{
-                    fontSize: '11px',
-                    color: 'var(--n400)',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {user?.roleLabel || 'مستخدم عادي'}
-                </div>
+                <div style={{ fontSize: '11px', color: 'var(--n400)' }}>🏭 مصنع</div>
               </div>
             )}
           </div>
         </div>
 
         <div className="sidebar-section">
-          {MAIN_ITEMS.map((item) => (
+          {ITEMS.map((item) => (
             <div
               key={item.id}
               className={`sidebar-item${active === item.id ? ' active' : ''}`}
-              onClick={() => goTo(item.path)}
+              onClick={() => goTo(item.id)}
               title={collapsed ? item.label : ''}
               style={{ justifyContent: collapsed ? 'center' : 'flex-start', whiteSpace: 'nowrap' }}
             >
               <span className="si-icon">{item.icon}</span>
               {!collapsed && item.label}
-            </div>
-          ))}
-        </div>
-
-        <div className="sidebar-section">
-          {!collapsed && <div className="sidebar-label">الحساب</div>}
-          {ACCOUNT_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              className={`sidebar-item${active === item.id ? ' active' : ''}`}
-              onClick={() => goTo(item.path)}
-              title={collapsed ? item.label : ''}
-              style={{ justifyContent: collapsed ? 'center' : 'flex-start', whiteSpace: 'nowrap' }}
-            >
-              <span className="si-icon">{item.icon}</span>
-              {!collapsed && item.label}
-              {!collapsed && item.id === 'notifications' && unreadCount > 0 && (
-                <span className="sidebar-badge">{unreadCount}</span>
-              )}
             </div>
           ))}
         </div>

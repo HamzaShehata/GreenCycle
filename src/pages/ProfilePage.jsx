@@ -1,26 +1,22 @@
 import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
-
-// ⚠️ MOCK DATA — بيانات المستخدم دي هتيجي من الـ API لما يتعمل الباك اند (GET /api/profile)
-const INITIAL_PROFILE = {
-  firstName: 'سارة',
-  lastName: 'أحمد',
-  email: 'sara.ahmed@example.com',
-  phone: '+20 10 1234 5678',
-};
+import { useAuth } from '../context/AuthContext';
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState(INITIAL_PROFILE);
+  const { user, updateProfile } = useAuth();
+
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [saved, setSaved] = useState(false);
 
-  const handleChange = (field, value) => {
-    setProfile((prev) => ({ ...prev, [field]: value }));
-    setSaved(false);
-  };
-
   const handleSave = () => {
+    updateProfile({ firstName, lastName, email, phone });
     setSaved(true);
   };
+
+  const initials = (firstName.charAt(0) || '؟') + (lastName.charAt(0) || '');
 
   return (
     <div className="screen">
@@ -37,14 +33,13 @@ export default function ProfilePage() {
                 className="avatar"
                 style={{ width: '56px', height: '56px', background: 'var(--g100)', color: 'var(--g700)', fontSize: '20px' }}
               >
-                {profile.firstName.charAt(0)}
-                {profile.lastName.charAt(0)}
+                {initials}
               </div>
               <div>
                 <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--n800)' }}>
-                  {profile.firstName} {profile.lastName}
+                  {firstName} {lastName}
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--n400)' }}>مستخدم عادي</div>
+                <div style={{ fontSize: '12px', color: 'var(--n400)' }}>{user?.roleLabel}</div>
               </div>
             </div>
 
@@ -53,16 +48,22 @@ export default function ProfilePage() {
                 <label>الاسم الأول</label>
                 <input
                   type="text"
-                  value={profile.firstName}
-                  onChange={(e) => handleChange('firstName', e.target.value)}
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    setSaved(false);
+                  }}
                 />
               </div>
               <div className="form-group">
                 <label>اسم العائلة</label>
                 <input
                   type="text"
-                  value={profile.lastName}
-                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  value={lastName}
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                    setSaved(false);
+                  }}
                 />
               </div>
             </div>
@@ -71,8 +72,11 @@ export default function ProfilePage() {
               <label>البريد الإلكتروني</label>
               <input
                 type="email"
-                value={profile.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setSaved(false);
+                }}
               />
             </div>
 
@@ -80,8 +84,11 @@ export default function ProfilePage() {
               <label>رقم التليفون</label>
               <input
                 type="text"
-                value={profile.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setSaved(false);
+                }}
               />
             </div>
 
@@ -91,7 +98,7 @@ export default function ProfilePage() {
 
             {saved && (
               <p style={{ color: 'var(--g600)', fontSize: '13px', marginTop: '10px' }}>
-                ✓ اتحفظ محلياً (هيتحفظ فعلياً في قاعدة البيانات لما نربط الباك اند)
+                ✓ اتحفظ (هيتحفظ فعلياً في قاعدة البيانات لما نربط الباك اند)
               </p>
             )}
           </div>

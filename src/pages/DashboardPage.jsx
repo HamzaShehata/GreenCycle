@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useAuth } from '../context/AuthContext';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <div className="screen">
       <div className="dash-layout">
@@ -12,7 +14,7 @@ export default function DashboardPage() {
         <div className="dash-main">
           <div className="dash-header">
             <div>
-              <div className="dash-title">صباح الخير، سارة 👋</div>
+              <div className="dash-title">صباح الخير، {user?.firstName} 👋</div>
               <div className="dash-sub">ده ملخص نشاط التدوير بتاعك</div>
             </div>
             <button className="btn btn-primary btn-sm" onClick={() => navigate('/request')}>+ طلب جديد</button>

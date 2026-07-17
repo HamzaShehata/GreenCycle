@@ -1,35 +1,9 @@
 import Sidebar from '../components/Sidebar';
-
-// ⚠️ MOCK DATA — الإشعارات دي هتيجي من الـ API لما يتعمل الباك اند
-// (وممكن كمان تتحدث لايف عن طريق WebSocket بدل ما تكون قايمة ثابتة)
-const NOTIFICATIONS = [
-  {
-    id: 1,
-    icon: '✅',
-    title: 'تم إرسال طلبك بنجاح',
-    desc: 'طلب #REQ-0892 اتبعت وهنبعتلك تحديث لما جامع المخلفات يقبله',
-    time: 'من شوية',
-    unread: true,
-  },
-  {
-    id: 2,
-    icon: '🚚',
-    title: 'جامع المخلفات في الطريق',
-    desc: 'عمر خليل في الطريق لاستلام طلب #REQ-0890، وصول متوقع 15 دقيقة',
-    time: 'من ساعتين',
-    unread: true,
-  },
-  {
-    id: 3,
-    icon: '💰',
-    title: 'اتضافلك نقاط',
-    desc: 'اتضاف 340 نقطة لمحفظتك بعد استلام طلب #REQ-0891',
-    time: 'إمبارح',
-    unread: false,
-  },
-];
+import { useRequests } from '../context/RequestsContext';
 
 export default function NotificationsPage() {
+  const { notifications, markAllNotificationsRead } = useRequests();
+
   return (
     <div className="screen">
       <div className="dash-layout">
@@ -37,32 +11,44 @@ export default function NotificationsPage() {
         <div className="dash-main">
           <div className="dash-header">
             <div className="dash-title">الإشعارات</div>
+            {notifications.some((n) => n.unread) && (
+              <button className="btn btn-outline btn-sm" onClick={markAllNotificationsRead}>
+                تعليم الكل كمقروء
+              </button>
+            )}
           </div>
 
-          <div className="card" style={{ padding: '0', maxWidth: '600px' }}>
-            {NOTIFICATIONS.map((n) => (
-              <div
-                key={n.id}
-                style={{
-                  display: 'flex',
-                  gap: '14px',
-                  padding: '16px 20px',
-                  borderBottom: '1px solid var(--n100)',
-                  background: n.unread ? 'var(--g50)' : 'transparent',
-                }}
-              >
-                <div style={{ fontSize: '22px' }}>{n.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>{n.title}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--n500)', marginTop: '2px' }}>{n.desc}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--n400)', marginTop: '6px' }}>{n.time}</div>
+          {notifications.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '48px' }}>
+              <div style={{ fontSize: '40px', marginBottom: '12px' }}>🔕</div>
+              <p style={{ color: 'var(--n500)' }}>مفيش إشعارات لسه</p>
+            </div>
+          ) : (
+            <div className="card" style={{ padding: '0', maxWidth: '600px' }}>
+              {notifications.map((n) => (
+                <div
+                  key={n.id}
+                  style={{
+                    display: 'flex',
+                    gap: '14px',
+                    padding: '16px 20px',
+                    borderBottom: '1px solid var(--n100)',
+                    background: n.unread ? 'var(--g50)' : 'transparent',
+                  }}
+                >
+                  <div style={{ fontSize: '22px' }}>{n.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--n800)' }}>{n.title}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--n500)', marginTop: '2px' }}>{n.desc}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--n400)', marginTop: '6px' }}>{n.time}</div>
+                  </div>
+                  {n.unread && (
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--g500)', flexShrink: 0, marginTop: '4px' }} />
+                  )}
                 </div>
-                {n.unread && (
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--g500)', flexShrink: 0, marginTop: '4px' }} />
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

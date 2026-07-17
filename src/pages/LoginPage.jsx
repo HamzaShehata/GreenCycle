@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+// ⚠️ بيانات الأدمن دي مؤقتاً مثبتة هنا كـ placeholder.
+// لما يتعمل الباك اند، التحقق ده هيحصل فعلياً على السيرفر (Hashed Password)
+// مش نص عادي متقارن في الفرونت إند زي دلوقتي — ده غير آمن خالص للإنتاج الحقيقي.
+const ADMIN_CREDENTIALS = {
+  email: 'hamzashehata03@gmail.com',
+  password: 'admin@green@2026',
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -28,6 +38,14 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     if (validate()) {
+      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+        login({ firstName: 'الأدمن', lastName: '', email, role: 'admin' });
+        navigate('/admin');
+        return;
+      }
+
+      const nameFromEmail = email.split('@')[0];
+      login({ firstName: nameFromEmail, lastName: '', email, role: 'individual' });
       navigate('/dashboard');
     }
   };
@@ -52,9 +70,7 @@ export default function LoginPage() {
               style={errors.email ? { borderColor: 'var(--r500)' } : {}}
             />
             {errors.email && (
-              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>
-                {errors.email}
-              </p>
+              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>{errors.email}</p>
             )}
           </div>
 
@@ -68,9 +84,7 @@ export default function LoginPage() {
               style={errors.password ? { borderColor: 'var(--r500)' } : {}}
             />
             {errors.password && (
-              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>
-                {errors.password}
-              </p>
+              <p style={{ color: 'var(--r500)', fontSize: '12px', marginTop: '4px' }}>{errors.password}</p>
             )}
           </div>
 

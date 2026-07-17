@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const ROLES = [
   { id: 'individual', icon: '👤', name: 'شخص عادي' },
@@ -9,6 +10,7 @@ const ROLES = [
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { registerUser } = useAuth();
   const [selectedRole, setSelectedRole] = useState('individual');
 
   const [firstName, setFirstName] = useState('');
@@ -54,12 +56,12 @@ export default function RegisterPage() {
 
   const handleSubmit = () => {
     if (validate()) {
-      // نوجّه المستخدم لصفحة مختلفة حسب الدور اللي اختاره
+      registerUser({ firstName, lastName, email, phone, role: selectedRole });
+
       if (selectedRole === 'collector') {
         navigate('/collector');
       } else if (selectedRole === 'factory') {
-        // لسه معملناش صفحة خاصة بالمصنع، فمؤقتاً بتوديه للداشبورد العادي
-        navigate('/dashboard');
+        navigate('/inventory');
       } else {
         navigate('/dashboard');
       }

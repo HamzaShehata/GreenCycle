@@ -26,6 +26,7 @@ export default function RequestPage() {
   const [building, setBuilding] = useState('');
   const [location, setLocation] = useState({ lat: 27.2579, lng: 33.8116 });
   const [timeSlot, setTimeSlot] = useState('morning');
+  const [photo, setPhoto] = useState(null);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -55,16 +56,22 @@ export default function RequestPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+ const handleSubmit = () => {
     if (validate()) {
       const materialNames = MATERIALS.filter((m) => selectedMaterials.includes(m.id)).map(
         (m) => m.name
       );
-      addRequest({ materials: materialNames, weight });
+      addRequest({
+        materials: materialNames,
+        weight,
+        address: `${address}, ${city}`,
+        lat: location.lat,
+        lng: location.lng,
+        photo,
+      });
       setSubmitted(true);
     }
   };
-
   return (
     <div className="screen">
       <div className="dash-layout">
@@ -148,6 +155,27 @@ export default function RequestPage() {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                     />
+                  </div>
+                  <div className="form-group">
+                    <label>صورة للمخلفات (اختياري)</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => setPhoto(reader.result);
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                    {photo && (
+                      <img
+                        src={photo}
+                        alt="معاينة"
+                        style={{ marginTop: '10px', width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: 'var(--r-md)' }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
